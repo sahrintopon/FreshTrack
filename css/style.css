@@ -1,0 +1,2022 @@
+/*
+=================================================================
+FRESHTRACK - FOOD EXPIRY TRACKER
+STYLE.CSS
+=================================================================
+
+PURPOSE
+-------
+This file controls the visual design of FreshTrack.
+
+It controls:
+
+- Colours
+- Typography
+- Spacing
+- Buttons
+- Forms
+- Dashboard cards
+- Food cards
+- Responsive layouts
+
+
+RESPONSIVE DESIGN
+-----------------
+Media queries are included near the bottom of this file.
+
+They change the layout when the screen becomes smaller.
+
+This allows FreshTrack to work on:
+- Desktop computers
+- Tablets
+- Mobile phones
+=================================================================
+*/
+
+
+/* =============================================================
+   CSS VARIABLES
+   =============================================================
+
+   CSS variables store values that are reused throughout
+   the stylesheet.
+
+   For example:
+
+   var(--green)
+
+   means:
+   use the colour stored inside --green.
+
+   This keeps the colour scheme consistent and makes the
+   stylesheet easier to maintain.
+   ============================================================= */
+
+:root {
+
+    --green: #16754f;
+
+    --dark-green: #10583c;
+
+    --soft-green: #eaf7ef;
+
+
+    --blue: #2186e8;
+
+    --soft-blue: #eaf5ff;
+
+
+    --yellow: #d58d12;
+
+    --soft-yellow: #fff4d7;
+
+
+    --red: #d44747;
+
+    --soft-red: #ffecec;
+
+
+    --dark: #17231e;
+
+    --grey: #6b7871;
+
+
+    --background: #f7f9f7;
+
+    --white: #ffffff;
+
+
+    --border: #dde6e0;
+
+}
+
+
+
+/* =============================================================
+   BASIC RESET
+   =============================================================
+
+   Browsers include their own default spacing.
+
+   This reset gives us more predictable layout behaviour.
+   ============================================================= */
+
+* {
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+
+/*
+Smooth scrolling is used when the Add Food buttons
+move the user down to the form.
+*/
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        var(--background);
+
+    color:
+        var(--dark);
+
+    line-height:
+        1.6;
+
+}
+
+
+
+/*
+All images automatically fit within their containers.
+*/
+
+img {
+
+    width: 100%;
+
+    display: block;
+
+}
+
+
+
+/*
+Make form controls use the same font as the website.
+*/
+
+button,
+input,
+select {
+
+    font: inherit;
+
+}
+
+
+
+button {
+
+    cursor: pointer;
+
+}
+
+
+
+/*
+.container keeps content centered and prevents
+the site from becoming too wide on large screens.
+*/
+
+.container {
+
+    width:
+        min(
+            1160px,
+            calc(100% - 40px)
+        );
+
+    margin:
+        0 auto;
+
+}
+
+
+
+/* =============================================================
+   HEADER
+   ============================================================= */
+
+.header {
+
+    /*
+    sticky keeps the navigation visible
+    when the user scrolls down.
+    */
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 100;
+
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.95
+        );
+
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+
+.navigation {
+
+    min-height:
+        80px;
+
+
+    /*
+    Flexbox places the logo on the left
+    and Add Food button on the right.
+    */
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+}
+
+
+
+.logo {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+
+    text-decoration:
+        none;
+
+    color:
+        var(--dark);
+
+}
+
+
+
+.logo-icon {
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+
+    /*
+    CSS Grid is used to center the icon.
+    */
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+
+    border-radius:
+        15px;
+
+    background:
+        var(--soft-green);
+
+
+    font-size:
+        25px;
+
+}
+
+
+
+.logo strong {
+
+    display:
+        block;
+
+    color:
+        var(--green);
+
+    font-size:
+        22px;
+
+}
+
+
+
+.logo small {
+
+    display:
+        block;
+
+    color:
+        var(--grey);
+
+}
+
+
+
+/* =============================================================
+   REUSABLE BUTTONS
+   =============================================================
+
+   .button provides the common button design.
+
+   Extra classes such as:
+   .button-primary
+   .button-light
+
+   change the appearance.
+   ============================================================= */
+
+.button {
+
+    border:
+        none;
+
+
+    padding:
+        12px 20px;
+
+
+    border-radius:
+        11px;
+
+
+    font-weight:
+        bold;
+
+
+    /*
+    transition makes hover changes smooth.
+    */
+
+    transition:
+        0.2s;
+
+}
+
+
+
+.button:hover {
+
+    /*
+    Move button slightly upward on hover.
+    */
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+
+.button-primary {
+
+    background:
+        var(--green);
+
+    color:
+        white;
+
+}
+
+
+
+.button-primary:hover {
+
+    background:
+        var(--dark-green);
+
+}
+
+
+
+.button-light {
+
+    background:
+        white;
+
+    color:
+        var(--dark);
+
+    border:
+        1px solid var(--border);
+
+}
+
+
+
+.button-large {
+
+    padding:
+        15px 25px;
+
+}
+
+
+
+/* =============================================================
+   HERO SECTION
+   ============================================================= */
+
+.hero {
+
+    padding:
+        80px 0;
+
+
+    /*
+    Two backgrounds are layered together:
+    1. Radial green highlight
+    2. Soft linear gradient
+    */
+
+    background:
+
+        radial-gradient(
+            circle at 90% 10%,
+            #caefd8,
+            transparent 35%
+        ),
+
+        linear-gradient(
+            135deg,
+            #fbfdfb,
+            #edf8f2
+        );
+
+}
+
+
+
+.hero-content {
+
+    /*
+    Desktop layout uses two columns:
+    - Text
+    - Image
+    */
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.05fr 0.95fr;
+
+    align-items:
+        center;
+
+    gap:
+        60px;
+
+}
+
+
+
+/*
+Eyebrow text is used above section headings.
+*/
+
+.eyebrow {
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--green);
+
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
+    letter-spacing:
+        1.5px;
+
+}
+
+
+
+.hero h1 {
+
+    max-width:
+        650px;
+
+
+    margin-bottom:
+        25px;
+
+
+    /*
+    clamp() makes the heading responsive.
+
+    Minimum = 45px
+    Preferred = 6vw
+    Maximum = 72px
+    */
+
+    font-size:
+        clamp(
+            45px,
+            6vw,
+            72px
+        );
+
+
+    line-height:
+        1.02;
+
+    letter-spacing:
+        -3px;
+
+}
+
+
+
+.hero h1 span {
+
+    color:
+        var(--green);
+
+}
+
+
+
+.hero-description {
+
+    max-width:
+        590px;
+
+    margin-bottom:
+        30px;
+
+    color:
+        var(--grey);
+
+    font-size:
+        18px;
+
+}
+
+
+
+.hero-image-card {
+
+    overflow:
+        hidden;
+
+
+    background:
+        white;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        28px;
+
+
+    box-shadow:
+        0 20px 50px
+        rgba(
+            23,
+            80,
+            56,
+            0.12
+        );
+
+}
+
+
+
+.hero-image-card img {
+
+    height:
+        330px;
+
+    object-fit:
+        cover;
+
+}
+
+
+
+.hero-image-text {
+
+    padding:
+        25px;
+
+}
+
+
+
+.hero-image-text h2 {
+
+    margin-bottom:
+        5px;
+
+}
+
+
+
+.hero-image-text p {
+
+    color:
+        var(--grey);
+
+}
+
+
+
+/* =============================================================
+   COMMON SECTION SPACING
+   ============================================================= */
+
+.dashboard,
+.form-section,
+.inventory-section,
+.api-section {
+
+    padding:
+        70px 0;
+
+}
+
+
+
+.section-heading {
+
+    margin-bottom:
+        28px;
+
+}
+
+
+
+.section-heading h2 {
+
+    font-size:
+        34px;
+
+}
+
+
+
+.section-heading > p:last-child {
+
+    color:
+        var(--grey);
+
+}
+
+
+
+/* =============================================================
+   DASHBOARD
+   ============================================================= */
+
+.stats-grid {
+
+    /*
+    Desktop displays four cards in one row.
+    */
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap:
+        18px;
+
+}
+
+
+
+.stat-card {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        16px;
+
+
+    padding:
+        22px;
+
+
+    background:
+        white;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        18px;
+
+}
+
+
+
+.stat-icon {
+
+    width:
+        50px;
+
+    height:
+        50px;
+
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+
+    border-radius:
+        14px;
+
+
+    font-size:
+        20px;
+
+}
+
+
+
+.stat-icon.blue {
+
+    background:
+        var(--soft-blue);
+
+}
+
+
+
+.stat-icon.green {
+
+    background:
+        var(--soft-green);
+
+}
+
+
+
+.stat-icon.yellow {
+
+    background:
+        var(--soft-yellow);
+
+}
+
+
+
+.stat-icon.red {
+
+    background:
+        var(--soft-red);
+
+}
+
+
+
+.stat-card p {
+
+    color:
+        var(--grey);
+
+    font-size:
+        13px;
+
+}
+
+
+
+.stat-card strong {
+
+    display:
+        block;
+
+    font-size:
+        27px;
+
+}
+
+
+
+/* =============================================================
+   ADD / EDIT FOOD FORM
+   ============================================================= */
+
+.form-section {
+
+    background:
+        #edf6f1;
+
+}
+
+
+
+.form-card {
+
+    padding:
+        40px;
+
+
+    background:
+        white;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        26px;
+
+
+    box-shadow:
+        0 18px 45px
+        rgba(
+            20,
+            70,
+            48,
+            0.08
+        );
+
+}
+
+
+
+.form-heading {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    margin-bottom:
+        30px;
+
+}
+
+
+
+.form-heading h2 {
+
+    font-size:
+        32px;
+
+}
+
+
+
+.form-heading p:last-child {
+
+    color:
+        var(--grey);
+
+}
+
+
+
+.form-icon {
+
+    width:
+        65px;
+
+    height:
+        65px;
+
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+
+    border-radius:
+        20px;
+
+
+    background:
+        var(--soft-green);
+
+
+    font-size:
+        30px;
+
+}
+
+
+
+/*
+The form uses two columns on desktop.
+*/
+
+.form-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap:
+        22px;
+
+}
+
+
+
+.form-group {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+}
+
+
+
+.form-group label {
+
+    font-size:
+        14px;
+
+    font-weight:
+        bold;
+
+}
+
+
+
+.form-group input,
+.form-group select {
+
+    width:
+        100%;
+
+
+    padding:
+        14px 15px;
+
+
+    background:
+        #fbfcfb;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        10px;
+
+
+    outline:
+        none;
+
+}
+
+
+
+/*
+When a form field is selected,
+its border becomes green.
+*/
+
+.form-group input:focus,
+.form-group select:focus {
+
+    border-color:
+        var(--green);
+
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            22,
+            117,
+            79,
+            0.10
+        );
+
+}
+
+
+
+.form-actions {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    margin-top:
+        28px;
+
+}
+
+
+
+/* =============================================================
+   SEARCH AND FILTER TOOLBAR
+   ============================================================= */
+
+.toolbar {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    margin-bottom:
+        25px;
+
+}
+
+
+
+.toolbar > input {
+
+    width:
+        350px;
+
+
+    padding:
+        13px 15px;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        10px;
+
+
+    outline:
+        none;
+
+}
+
+
+
+.toolbar > input:focus {
+
+    border-color:
+        var(--green);
+
+}
+
+
+
+.filters {
+
+    display:
+        flex;
+
+    gap:
+        7px;
+
+    flex-wrap:
+        wrap;
+
+}
+
+
+
+.filter-button {
+
+    padding:
+        9px 14px;
+
+
+    background:
+        white;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        30px;
+
+}
+
+
+
+/*
+The selected filter and hovered filters use green.
+*/
+
+.filter-button:hover,
+.filter-button.active {
+
+    background:
+        var(--green);
+
+    border-color:
+        var(--green);
+
+    color:
+        white;
+
+}
+
+
+
+/* =============================================================
+   FOOD CARD GRID
+   =============================================================
+
+   JavaScript dynamically creates these cards.
+
+   The cards do not exist in index.html initially.
+   ============================================================= */
+
+.food-grid {
+
+    /*
+    Desktop:
+    three cards per row.
+    */
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        20px;
+
+}
+
+
+
+.food-card {
+
+    overflow:
+        hidden;
+
+
+    background:
+        white;
+
+
+    border:
+        1px solid var(--border);
+
+
+    border-radius:
+        18px;
+
+
+    box-shadow:
+        0 10px 30px
+        rgba(
+            20,
+            60,
+            40,
+            0.06
+        );
+
+
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+
+}
+
+
+
+.food-card:hover {
+
+    transform:
+        translateY(-4px);
+
+
+    box-shadow:
+        0 16px 36px
+        rgba(
+            20,
+            60,
+            40,
+            0.10
+        );
+
+}
+
+
+
+/*
+Images use object-fit: cover so they fill the card
+without becoming stretched.
+*/
+
+.food-card-image {
+
+    width:
+        100%;
+
+    height:
+        180px;
+
+    object-fit:
+        cover;
+
+}
+
+
+
+.food-card-content {
+
+    padding:
+        20px;
+
+}
+
+
+
+.food-card-header {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    margin-bottom:
+        15px;
+
+}
+
+
+
+.food-card-header h3 {
+
+    font-size:
+        20px;
+
+}
+
+
+
+.food-category {
+
+    color:
+        var(--grey);
+
+    font-size:
+        13px;
+
+}
+
+
+
+/* =============================================================
+   STATUS BADGES
+   ============================================================= */
+
+.status {
+
+    height:
+        fit-content;
+
+
+    display:
+        inline-block;
+
+
+    padding:
+        5px 10px;
+
+
+    border-radius:
+        30px;
+
+
+    font-size:
+        11px;
+
+
+    font-weight:
+        bold;
+
+
+    white-space:
+        nowrap;
+
+}
+
+
+
+/*
+Fresh = Green
+*/
+
+.status-fresh {
+
+    background:
+        var(--soft-green);
+
+    color:
+        var(--green);
+
+}
+
+
+
+/*
+Expiring Soon = Yellow
+*/
+
+.status-warning {
+
+    background:
+        var(--soft-yellow);
+
+    color:
+        var(--yellow);
+
+}
+
+
+
+/*
+Expired = Red
+*/
+
+.status-expired {
+
+    background:
+        var(--soft-red);
+
+    color:
+        var(--red);
+
+}
+
+
+
+/* =============================================================
+   FOOD DETAILS
+   ============================================================= */
+
+.food-detail {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+
+    margin:
+        8px 0;
+
+
+    color:
+        var(--grey);
+
+
+    font-size:
+        13px;
+
+}
+
+
+
+.food-detail strong {
+
+    color:
+        var(--dark);
+
+}
+
+
+
+.food-notes {
+
+    margin-top:
+        14px;
+
+
+    padding:
+        10px;
+
+
+    background:
+        #f5f7f5;
+
+
+    border-radius:
+        9px;
+
+
+    color:
+        var(--grey);
+
+
+    font-size:
+        12px;
+
+}
+
+
+
+/* =============================================================
+   EDIT / DELETE BUTTONS
+   ============================================================= */
+
+.card-actions {
+
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    padding:
+        0 20px 20px;
+
+}
+
+
+
+.edit-button,
+.delete-button {
+
+    flex:
+        1;
+
+
+    border:
+        none;
+
+
+    padding:
+        9px 12px;
+
+
+    border-radius:
+        8px;
+
+
+    font-weight:
+        bold;
+
+}
+
+
+
+.edit-button {
+
+    background:
+        var(--soft-blue);
+
+    color:
+        var(--blue);
+
+}
+
+
+
+.delete-button {
+
+    background:
+        var(--soft-red);
+
+    color:
+        var(--red);
+
+}
+
+
+
+/* =============================================================
+   EMPTY INVENTORY MESSAGE
+   ============================================================= */
+
+.empty-message {
+
+    padding:
+        50px;
+
+    text-align:
+        center;
+
+    color:
+        var(--grey);
+
+}
+
+
+
+/* =============================================================
+   API SECTION
+   ============================================================= */
+
+.api-section {
+
+    background:
+        #12251d;
+
+    color:
+        white;
+
+}
+
+
+
+.api-card {
+
+    padding:
+        40px;
+
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+
+    border-radius:
+        25px;
+
+}
+
+
+
+.api-card .eyebrow {
+
+    color:
+        #8fd4b0;
+
+}
+
+
+
+.api-card > div:first-child > p:last-child {
+
+    color:
+        #b9c7c0;
+
+}
+
+
+
+.api-buttons {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    margin:
+        25px 0;
+
+}
+
+
+
+.api-result {
+
+    padding:
+        15px;
+
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+
+    border-radius:
+        10px;
+
+
+    color:
+        #d2ded8;
+
+
+    font-family:
+        monospace;
+
+}
+
+
+
+/* =============================================================
+   TOAST NOTIFICATION
+   =============================================================
+
+   Toast starts invisible.
+
+   JavaScript adds the .show class to make it visible.
+   ============================================================= */
+
+.toast {
+
+    position:
+        fixed;
+
+
+    right:
+        25px;
+
+    bottom:
+        25px;
+
+
+    z-index:
+        500;
+
+
+    padding:
+        14px 20px;
+
+
+    background:
+        #17231e;
+
+
+    color:
+        white;
+
+
+    border-radius:
+        11px;
+
+
+    opacity:
+        0;
+
+
+    transform:
+        translateY(20px);
+
+
+    pointer-events:
+        none;
+
+
+    transition:
+        0.25s;
+
+}
+
+
+
+/*
+JavaScript adds this class temporarily.
+*/
+
+.toast.show {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+
+/* =============================================================
+   FOOTER
+   ============================================================= */
+
+footer {
+
+    padding:
+        35px 0;
+
+
+    background:
+        #0d1914;
+
+
+    color:
+        #c5d0ca;
+
+}
+
+
+
+.footer-content {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+}
+
+
+
+footer strong {
+
+    color:
+        white;
+
+}
+
+
+
+footer p {
+
+    font-size:
+        13px;
+
+}
+
+
+
+/* =============================================================
+   HELPER CLASS
+   =============================================================
+
+   JavaScript adds or removes this class
+   when elements should be hidden.
+   ============================================================= */
+
+.hidden {
+
+    display:
+        none !important;
+
+}
+
+
+
+/* =============================================================
+   RESPONSIVE DESIGN - TABLET
+   =============================================================
+
+   This media query activates when the screen width
+   is 850px or smaller.
+
+   Changes:
+
+   - Hero becomes one column.
+   - Dashboard becomes two columns.
+   - Food cards become two columns.
+   - Toolbar becomes vertical.
+
+   This improves usability on tablets.
+   ============================================================= */
+
+@media (max-width: 850px) {
+
+
+    .hero-content {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+
+    .stats-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+
+    .food-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+
+    .toolbar {
+
+        flex-direction:
+            column;
+
+    }
+
+
+
+    .toolbar > input {
+
+        width:
+            100%;
+
+    }
+
+}
+
+
+
+/* =============================================================
+   RESPONSIVE DESIGN - MOBILE
+   =============================================================
+
+   This media query activates when the screen is
+   600px or smaller.
+
+   This is important for the mobile-responsive
+   assessment requirement.
+
+   Changes:
+
+   - Dashboard becomes one column.
+   - Form becomes one column.
+   - Food cards become one column.
+   - Hero image becomes smaller.
+   - Filter buttons can scroll horizontally.
+   - Footer stacks vertically.
+   ============================================================= */
+
+@media (max-width: 600px) {
+
+
+    .container {
+
+        width:
+            calc(100% - 28px);
+
+    }
+
+
+
+    .hero {
+
+        padding:
+            55px 0;
+
+    }
+
+
+
+    .hero h1 {
+
+        font-size:
+            45px;
+
+        letter-spacing:
+            -2px;
+
+    }
+
+
+
+    .hero-image-card img {
+
+        height:
+            260px;
+
+    }
+
+
+
+    .stats-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+
+    .form-card {
+
+        padding:
+            23px;
+
+    }
+
+
+
+    .form-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+
+    .food-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+
+    .filters {
+
+        flex-wrap:
+            nowrap;
+
+        overflow-x:
+            auto;
+
+    }
+
+
+
+    .filter-button {
+
+        flex:
+            0 0 auto;
+
+    }
+
+
+
+    .footer-content {
+
+        flex-direction:
+            column;
+
+    }
+
+}
