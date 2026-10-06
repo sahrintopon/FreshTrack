@@ -6,154 +6,62 @@ FRESHTRACK - FOOD EXPIRY TRACKER
 INDEX.HTML
 =================================================================
 
-PURPOSE OF THIS FILE
---------------------
-This file contains the STRUCTURE of the FreshTrack application.
+PURPOSE
+-------
+This file contains the HTML structure of the FreshTrack application.
 
-The project is divided into three main technologies:
+ASSESSMENT FEATURES SHOWN IN THIS PAGE
+--------------------------------------
+- User interface created with HTML
+- Form controls used by JavaScript
+- CRUD controls for Create, Read, Update and Delete
+- DOM elements selected and modified by JavaScript
+- Search and filter controls
+- Responsive layout supported by style.css
+- REST API demonstration with GET and POST buttons
 
-1. HTML
-   Creates the structure and elements displayed on the webpage.
-
-2. CSS
-   Controls the colours, layout, spacing and responsive design.
-
-3. JavaScript
-   Controls the behaviour of the application, including CRUD,
-   searching, filtering, expiry calculations and API requests.
-
-
-MAIN SECTIONS OF THIS PAGE
---------------------------
-1. Header / Navigation
-2. Hero introduction
-3. Food statistics dashboard
-4. Add / Edit Food form
-5. Food Inventory
-6. Search and status filters
-7. REST API demonstration
-8. Footer
-
-
-CRUD IN FRESHTRACK
-------------------
-CREATE  = Add a new food item.
-READ    = Display all saved food items.
-UPDATE  = Edit an existing food item.
-DELETE  = Delete an existing food item.
-
-
-ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
-------------------------------------------
-- User interface
-- CRUD controls
-- DOM elements for JavaScript manipulation
-- Forms
-- Buttons and event-driven controls
-- Responsive layout
-- REST API demonstration
+IMPORTANT FOR ORAL EXPLANATION
+------------------------------
+HTML provides the structure.
+CSS controls presentation.
+JavaScript controls the behaviour and application logic.
 =================================================================
 -->
 
 <html lang="en">
-
 <head>
-
-    <!--
-        UTF-8 allows the browser to display normal text,
-        symbols and emojis correctly.
-    -->
     <meta charset="UTF-8">
 
-
     <!--
-        The viewport setting allows the website to resize
-        correctly on mobile phones and tablets.
+        The viewport meta tag allows the responsive CSS media queries
+        to work correctly on phones and tablets.
     -->
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>FreshTrack | Food Expiry Tracker</title>
 
-    <!-- Text displayed on the browser tab -->
-    <title>
-        FreshTrack | Food Expiry Tracker
-    </title>
-
-
-    <!--
-        Connect this HTML page to the CSS file.
-
-        Because style.css is inside the css folder,
-        the path is:
-        css/style.css
-    -->
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
-
+    <!-- External CSS file -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
-
-
 <body>
-
 
     <!-- =========================================================
          HEADER / NAVIGATION
          =========================================================
-
-         The header contains:
-         - FreshTrack branding
-         - Add Food button
-
          JavaScript attaches a CLICK event to the Add Food button.
-         When clicked, the page scrolls to the food form.
+         The same scrollToForm() function is reused by two buttons.
          ========================================================= -->
-
     <header class="header">
-
         <div class="container navigation">
 
-
-            <!-- FreshTrack logo / application name -->
-
-            <a
-                href="#"
-                class="logo"
-            >
-
-                <span class="logo-icon">
-                    🌿
-                </span>
-
-
+            <a href="#" class="logo">
+                <span class="logo-icon">🌿</span>
                 <div>
-
-                    <strong>
-                        FreshTrack
-                    </strong>
-
-                    <small>
-                        Food Expiry Tracker
-                    </small>
-
+                    <strong>FreshTrack</strong>
+                    <small>Food Expiry Tracker</small>
                 </div>
-
             </a>
-
-
-
-            <!--
-                EVENT-DRIVEN PROGRAMMING
-
-                JavaScript listens for a CLICK event on this button.
-
-                When clicked:
-                scrollToForm() is called.
-            -->
 
             <button
                 id="top-add-button"
@@ -163,72 +71,31 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                 + Add Food
             </button>
 
-
         </div>
-
     </header>
-
 
 
     <!-- =========================================================
          HERO SECTION
          =========================================================
-
-         PURPOSE:
-         Explain what FreshTrack does and what problem it solves.
-
-         TARGET USER:
-         People who store food at home.
-
-         PAIN POINT:
-         People may forget expiry dates and waste food.
-
-         SOLUTION:
-         FreshTrack records food expiry dates and automatically
-         shows whether food is Fresh, Expiring Soon or Expired.
+         FreshTrack solves a simple user problem:
+         people can forget food expiry dates and waste food.
          ========================================================= -->
-
     <section class="hero">
-
         <div class="container hero-content">
 
-
-            <!-- LEFT SIDE: Introduction -->
-
             <div class="hero-text">
-
-                <p class="eyebrow">
-                    FOOD EXPIRY TRACKER
-                </p>
-
+                <p class="eyebrow">FOOD EXPIRY TRACKER</p>
 
                 <h1>
-
                     Eat it before
-
-                    <span>
-                        you waste it.
-                    </span>
-
+                    <span>you waste it.</span>
                 </h1>
 
-
                 <p class="hero-description">
-
-                    FreshTrack helps you keep track of food
-                    expiry dates so you can use your food
-                    before it goes to waste.
-
+                    FreshTrack helps you keep track of food expiry dates
+                    so you can use your food before it goes to waste.
                 </p>
-
-
-
-                <!--
-                    Another CLICK event is attached to this button.
-
-                    This demonstrates that one function can be reused
-                    by multiple event handlers.
-                -->
 
                 <button
                     id="hero-add-button"
@@ -237,378 +104,157 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                 >
                     + Add Food Item
                 </button>
-
             </div>
 
-
-
-            <!-- RIGHT SIDE: Hero image -->
-
             <div class="hero-image-card">
-
                 <img
                     src="images/hero-food.jpg"
                     alt="Fresh food and vegetables"
                 >
 
-
                 <div class="hero-image-text">
-
-                    <h2>
-                        Keep your food fresh
-                    </h2>
-
-
+                    <h2>Keep your food fresh</h2>
                     <p>
-
                         Check what is fresh, what should be eaten soon,
                         and what has already expired.
-
                     </p>
-
                 </div>
-
             </div>
 
-
         </div>
-
     </section>
-
 
 
     <!-- =========================================================
          FOOD OVERVIEW DASHBOARD
          =========================================================
+         JavaScript changes the textContent of these four elements.
+         The values are calculated from the foods array.
 
-         JavaScript automatically updates these four numbers.
-
-         The numbers are NOT typed manually.
-
-         JavaScript:
-         1. Loops through the foods array.
-         2. Calculates each food's expiry status.
-         3. Counts Fresh, Expiring Soon and Expired food.
-         4. Changes the textContent of the HTML elements below.
-
-         This demonstrates DOM MANIPULATION.
+         This is evidence of DOM manipulation.
          ========================================================= -->
-
     <section class="dashboard">
-
         <div class="container">
 
-
             <div class="section-heading">
-
-                <p class="eyebrow">
-                    YOUR KITCHEN
-                </p>
-
-                <h2>
-                    Food Overview
-                </h2>
-
+                <p class="eyebrow">YOUR KITCHEN</p>
+                <h2>Food Overview</h2>
             </div>
-
-
 
             <div class="stats-grid">
 
-
-                <!-- TOTAL FOOD -->
-
                 <article class="stat-card">
-
-                    <div class="stat-icon blue">
-                        🛒
-                    </div>
-
-
+                    <div class="stat-icon blue">🛒</div>
                     <div>
-
-                        <p>
-                            Total Items
-                        </p>
-
-
-                        <!-- JavaScript changes this number -->
-
-                        <strong id="total-count">
-                            0
-                        </strong>
-
+                        <p>Total Items</p>
+                        <strong id="total-count">0</strong>
                     </div>
-
                 </article>
 
-
-
-                <!-- FRESH FOOD -->
-
                 <article class="stat-card">
-
-                    <div class="stat-icon green">
-                        🌿
-                    </div>
-
-
+                    <div class="stat-icon green">🌿</div>
                     <div>
-
-                        <p>
-                            Fresh
-                        </p>
-
-
-                        <!-- JavaScript changes this number -->
-
-                        <strong id="fresh-count">
-                            0
-                        </strong>
-
+                        <p>Fresh</p>
+                        <strong id="fresh-count">0</strong>
                     </div>
-
                 </article>
 
-
-
-                <!-- EXPIRING SOON -->
-
                 <article class="stat-card">
-
-                    <div class="stat-icon yellow">
-                        ⏰
-                    </div>
-
-
+                    <div class="stat-icon yellow">⏰</div>
                     <div>
-
-                        <p>
-                            Expiring Soon
-                        </p>
-
-
-                        <!-- JavaScript changes this number -->
-
-                        <strong id="expiring-count">
-                            0
-                        </strong>
-
+                        <p>Expiring Soon</p>
+                        <strong id="expiring-count">0</strong>
                     </div>
-
                 </article>
 
-
-
-                <!-- EXPIRED -->
-
                 <article class="stat-card">
-
-                    <div class="stat-icon red">
-                        ⚠
-                    </div>
-
-
+                    <div class="stat-icon red">⚠</div>
                     <div>
-
-                        <p>
-                            Expired
-                        </p>
-
-
-                        <!-- JavaScript changes this number -->
-
-                        <strong id="expired-count">
-                            0
-                        </strong>
-
+                        <p>Expired</p>
+                        <strong id="expired-count">0</strong>
                     </div>
-
                 </article>
-
 
             </div>
-
         </div>
-
     </section>
-
 
 
     <!-- =========================================================
          ADD / EDIT FOOD FORM
          =========================================================
+         ONE form performs TWO CRUD operations:
 
-         This ONE form performs TWO CRUD operations.
+         CREATE:
+         editingId is null, so JavaScript creates a new food object.
 
+         UPDATE:
+         editingId contains an existing ID, so JavaScript replaces
+         the matching food object in the foods array.
 
-         CREATE
-         ------
-         When editingId is null:
-
-         JavaScript creates a new food object and uses:
-
-         foods.push(foodData)
-
-         to add the object to the foods array.
-
-
-         UPDATE
-         ------
-         When editingId contains an existing food ID:
-
-         JavaScript finds that object in the array and updates it.
-
-
-         EVENT
-         -----
-         JavaScript listens for the FORM SUBMIT event.
+         PRODUCT CODE:
+         Product Code is required, converted to uppercase and checked
+         against existing records so duplicate codes are not allowed.
          ========================================================= -->
-
-    <section
-        class="form-section"
-        id="food-form-section"
-    >
-
+    <section class="form-section" id="food-form-section">
         <div class="container">
-
             <div class="form-card">
 
-
-                <!-- Form heading -->
-
                 <div class="form-heading">
-
                     <div>
-
-                        <p class="eyebrow">
-                            FOOD DETAILS
-                        </p>
-
-
-                        <!--
-                            JavaScript changes this text to:
-
-                            Edit Food Item
-
-                            when the user edits an existing record.
-                        -->
-
-                        <h2 id="form-title">
-                            Add Food Item
-                        </h2>
-
-
-                        <p>
-                            Enter the food information below.
-                        </p>
-
+                        <p class="eyebrow">FOOD DETAILS</p>
+                        <h2 id="form-title">Add Food Item</h2>
+                        <p>Enter the food information below.</p>
                     </div>
 
-
-                    <span class="form-icon">
-                        🥦
-                    </span>
-
+                    <span class="form-icon">🥦</span>
                 </div>
 
-
-
-                <!-- =================================================
-                     FOOD FORM
-                     ================================================= -->
-
                 <form id="food-form">
-
-
                     <div class="form-grid">
 
-
-                        <!-- FOOD NAME -->
+                        <!--
+                            PRODUCT CODE
+                            Example values: MILK001, BEEF001, APPLE001.
+                            JavaScript stores this as food.productCode.
+                        -->
+                        <div class="form-group">
+                            <label for="product-code">Product Code *</label>
+                            <input
+                                id="product-code"
+                                type="text"
+                                placeholder="Example: BEEF001"
+                                required
+                            >
+                        </div>
 
                         <div class="form-group">
-
-                            <label for="food-name">
-                                Food Name *
-                            </label>
-
-
+                            <label for="food-name">Food Name *</label>
                             <input
                                 id="food-name"
                                 type="text"
                                 placeholder="Example: Fresh Milk"
                                 required
                             >
-
                         </div>
 
-
-
-                        <!-- CATEGORY -->
-
                         <div class="form-group">
-
-                            <label for="food-category">
-                                Category *
-                            </label>
-
-
-                            <select
-                                id="food-category"
-                                required
-                            >
-
-                                <option value="">
-                                    Select category
-                                </option>
-
-                                <option value="Fruit">
-                                    Fruit
-                                </option>
-
-                                <option value="Vegetables">
-                                    Vegetables
-                                </option>
-
-                                <option value="Dairy">
-                                    Dairy
-                                </option>
-
-                                <option value="Meat">
-                                    Meat
-                                </option>
-
-                                <option value="Bakery">
-                                    Bakery
-                                </option>
-
-                                <option value="Frozen">
-                                    Frozen
-                                </option>
-
-                                <option value="Drinks">
-                                    Drinks
-                                </option>
-
-                                <option value="Others">
-                                    Others
-                                </option>
-
+                            <label for="food-category">Category *</label>
+                            <select id="food-category" required>
+                                <option value="">Select category</option>
+                                <option value="Fruit">Fruit</option>
+                                <option value="Vegetables">Vegetables</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Meat">Meat</option>
+                                <option value="Bakery">Bakery</option>
+                                <option value="Frozen">Frozen</option>
+                                <option value="Drinks">Drinks</option>
+                                <option value="Others">Others</option>
                             </select>
-
                         </div>
 
-
-
-                        <!-- QUANTITY -->
-
                         <div class="form-group">
-
-                            <label for="food-quantity">
-                                Quantity *
-                            </label>
-
-
+                            <label for="food-quantity">Quantity *</label>
                             <input
                                 id="food-quantity"
                                 type="number"
@@ -616,106 +262,40 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                                 min="1"
                                 required
                             >
-
                         </div>
 
-
-
-                        <!-- EXPIRY DATE -->
-
                         <div class="form-group">
-
-                            <label for="food-expiry">
-                                Expiry Date *
-                            </label>
-
-
+                            <label for="food-expiry">Expiry Date *</label>
                             <input
                                 id="food-expiry"
                                 type="date"
                                 required
                             >
-
                         </div>
 
-
-
-                        <!-- STORAGE LOCATION -->
-
                         <div class="form-group">
-
-                            <label for="food-storage">
-                                Storage Location *
-                            </label>
-
-
-                            <select
-                                id="food-storage"
-                                required
-                            >
-
-                                <option value="">
-                                    Select location
-                                </option>
-
-                                <option value="Fridge">
-                                    Fridge
-                                </option>
-
-                                <option value="Freezer">
-                                    Freezer
-                                </option>
-
-                                <option value="Pantry">
-                                    Pantry
-                                </option>
-
-                                <option value="Kitchen Cabinet">
-                                    Kitchen Cabinet
-                                </option>
-
+                            <label for="food-storage">Storage Location *</label>
+                            <select id="food-storage" required>
+                                <option value="">Select location</option>
+                                <option value="Fridge">Fridge</option>
+                                <option value="Freezer">Freezer</option>
+                                <option value="Pantry">Pantry</option>
+                                <option value="Kitchen Cabinet">Kitchen Cabinet</option>
                             </select>
-
                         </div>
 
-
-
-                        <!-- OPTIONAL NOTES -->
-
                         <div class="form-group">
-
-                            <label for="food-notes">
-                                Notes
-                            </label>
-
-
+                            <label for="food-notes">Notes</label>
                             <input
                                 id="food-notes"
                                 type="text"
                                 placeholder="Optional note"
                             >
-
                         </div>
-
 
                     </div>
 
-
-
-                    <!-- FORM BUTTONS -->
-
                     <div class="form-actions">
-
-
-                        <!--
-                            When adding:
-                            "Add Item"
-
-                            When editing:
-                            JavaScript changes the text to:
-                            "Save Changes"
-                        -->
-
                         <button
                             id="save-button"
                             type="submit"
@@ -724,15 +304,6 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                             Add Item
                         </button>
 
-
-
-                        <!--
-                            Hidden when adding.
-
-                            JavaScript displays this button only
-                            while editing an existing food item.
-                        -->
-
                         <button
                             id="cancel-button"
                             type="button"
@@ -740,254 +311,101 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                         >
                             Cancel
                         </button>
-
-
                     </div>
-
-
                 </form>
 
             </div>
-
         </div>
-
     </section>
-
 
 
     <!-- =========================================================
          FOOD INVENTORY
          =========================================================
+         This section represents READ in CRUD.
 
-         This section represents the READ part of CRUD.
-
-         The HTML does NOT contain the actual food cards.
-
-         Instead:
-
-         1. JavaScript reads objects from the foods array.
-         2. JavaScript creates the food cards.
-         3. JavaScript inserts them into #food-grid.
-
-         This demonstrates dynamic DOM manipulation.
+         JavaScript dynamically creates the food cards and inserts
+         them inside #food-grid using appendChild().
          ========================================================= -->
-
-    <section
-        class="inventory-section"
-        id="inventory-section"
-    >
-
+    <section class="inventory-section" id="inventory-section">
         <div class="container">
 
-
             <div class="section-heading">
-
-                <p class="eyebrow">
-                    MY FOOD
-                </p>
-
-
-                <h2>
-                    Food Inventory
-                </h2>
-
-
-                <p>
-                    Search and manage your food items.
-                </p>
-
+                <p class="eyebrow">MY FOOD</p>
+                <h2>Food Inventory</h2>
+                <p>Search by food name or product code and manage your items.</p>
             </div>
-
-
-
-            <!-- =================================================
-                 SEARCH AND FILTER CONTROLS
-                 ================================================= -->
 
             <div class="toolbar">
 
-
                 <!--
-                    SEARCH
-
-                    JavaScript listens for the INPUT event.
-
-                    Every time the user types,
-                    displayFoods() runs again.
+                    JavaScript listens for the INPUT event here.
+                    The search matches either food.name or food.productCode.
                 -->
-
                 <input
                     id="search-input"
                     type="search"
-                    placeholder="🔎 Search food items..."
+                    placeholder="🔎 Search name or product code..."
                 >
 
-
-
-                <!-- STATUS FILTERS -->
-
                 <div class="filters">
-
-
-                    <!--
-                        data-filter stores information that
-                        JavaScript can read using:
-
-                        button.dataset.filter
-                    -->
-
-                    <button
-                        class="filter-button active"
-                        data-filter="All"
-                        type="button"
-                    >
-                        All
-                    </button>
-
-
-                    <button
-                        class="filter-button"
-                        data-filter="Fresh"
-                        type="button"
-                    >
-                        Fresh
-                    </button>
-
-
-                    <button
-                        class="filter-button"
-                        data-filter="Expiring Soon"
-                        type="button"
-                    >
-                        Expiring Soon
-                    </button>
-
-
-                    <button
-                        class="filter-button"
-                        data-filter="Expired"
-                        type="button"
-                    >
-                        Expired
-                    </button>
-
-
+                    <button class="filter-button active" data-filter="All" type="button">All</button>
+                    <button class="filter-button" data-filter="Fresh" type="button">Fresh</button>
+                    <button class="filter-button" data-filter="Expiring Soon" type="button">Expiring Soon</button>
+                    <button class="filter-button" data-filter="Expired" type="button">Expired</button>
                 </div>
-
             </div>
 
+            <!-- Food cards are inserted here by JavaScript -->
+            <div id="food-grid" class="food-grid"></div>
 
-
-            <!-- =================================================
-                 FOOD GRID
-
-                 JavaScript dynamically inserts food cards here.
-
-                 It begins empty because the food data comes
-                 from JavaScript and localStorage.
-                 ================================================= -->
-
-            <div
-                id="food-grid"
-                class="food-grid"
-            >
-            </div>
-
-
-
-            <!--
-                Displayed when:
-                - No food has been added
-                OR
-                - Search/filter produces no results
-            -->
-
-            <div
-                id="empty-message"
-                class="empty-message hidden"
-            >
-
+            <div id="empty-message" class="empty-message hidden">
                 🥕 No food items found.
-
             </div>
-
 
         </div>
-
     </section>
-
 
 
     <!-- =========================================================
          REST API / AJAX DEMONSTRATION
          =========================================================
+         THIS SECTION IS KEPT FOR THE ASSESSMENT API REQUIREMENT.
 
-         The assessment requires evidence of:
+         GET BUTTON:
+         Uses fetch() without a method, therefore HTTP GET is used.
+         The JSON response is converted with response.json().
 
-         - Asynchronous programming
-         - JSON
-         - HTTP GET
-         - POST / PATCH / PUT
-
-         FreshTrack demonstrates:
-
-         GET
-         ---
-         Downloads JSON data from JSONPlaceholder.
-
-
-         POST
-         ----
-         Sends a JavaScript object to JSONPlaceholder
-         as JSON data.
-
+         POST BUTTON:
+         Uses fetch() with method: "POST".
+         A FreshTrack-style JavaScript object is converted into JSON
+         using JSON.stringify() before being sent.
 
          JavaScript concepts demonstrated:
-
-         async
-         await
-         fetch()
-         response.json()
-         JSON.stringify()
-         try / catch
+         - async
+         - await
+         - fetch()
+         - response.json()
+         - JSON.stringify()
+         - try / catch
+         - HTTP GET
+         - HTTP POST
+         - REST API
          ========================================================= -->
-
     <section class="api-section">
-
         <div class="container">
-
-
             <div class="api-card">
 
-
                 <div>
-
-                    <p class="eyebrow">
-                        REST API
-                    </p>
-
-
-                    <h2>
-                        API Demonstration
-                    </h2>
-
-
+                    <p class="eyebrow">REST API</p>
+                    <h2>API Demonstration</h2>
                     <p>
-
-                        Test asynchronous GET and POST requests
-                        using JavaScript fetch().
-
+                        Test the required asynchronous GET and POST requests
+                        using the public JSONPlaceholder REST API.
                     </p>
-
                 </div>
 
-
-
                 <div class="api-buttons">
-
-
-                    <!-- AJAX GET -->
-
                     <button
                         id="get-button"
                         class="button button-light"
@@ -996,10 +414,6 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                         Test GET
                     </button>
 
-
-
-                    <!-- AJAX POST -->
-
                     <button
                         id="post-button"
                         class="button button-primary"
@@ -1007,113 +421,46 @@ ASSESSMENT CONCEPTS SUPPORTED BY THIS PAGE
                     >
                         Test POST
                     </button>
-
-
                 </div>
 
-
-
-                <!--
-                    JavaScript changes the text here after
-                    an API request completes.
-                -->
-
-                <div
-                    id="api-result"
-                    class="api-result"
-                >
-
+                <!-- JavaScript replaces this text after an API request -->
+                <div id="api-result" class="api-result">
                     API has not been tested yet.
-
                 </div>
-
 
             </div>
-
         </div>
-
     </section>
-
 
 
     <!-- =========================================================
          TOAST NOTIFICATION
          =========================================================
-
-         JavaScript displays this message after:
-
-         - CREATE
-         - UPDATE
-         - DELETE
-
-         It demonstrates DOM manipulation using:
-
-         textContent
-         classList.add()
-         classList.remove()
+         JavaScript changes textContent and toggles the .show class
+         after Create, Update, Delete or validation actions.
          ========================================================= -->
-
-    <div
-        id="toast"
-        class="toast"
-    >
+    <div id="toast" class="toast">
         Food saved successfully.
     </div>
 
 
-
-    <!-- =========================================================
-         FOOTER
-         ========================================================= -->
-
     <footer>
-
         <div class="container footer-content">
-
-
             <div>
-
-                <strong>
-                    🌿 FreshTrack
-                </strong>
-
-
-                <p>
-                    Food Expiry Tracker
-                </p>
-
+                <strong>🌿 FreshTrack</strong>
+                <p>Food Expiry Tracker</p>
             </div>
 
-
-            <p>
-                Built using HTML, CSS and Vanilla JavaScript
-            </p>
-
-
+            <p>Built using HTML, CSS and Vanilla JavaScript</p>
         </div>
-
     </footer>
 
 
-
-    <!-- =========================================================
-         JAVASCRIPT FILE
-         =========================================================
-
-         app.js is loaded at the END of the body.
-
-         WHY?
-
-         The browser creates the HTML elements first.
-
-         JavaScript can then safely select those elements using:
-
-         document.querySelector()
-         ========================================================= -->
-
+    <!--
+        app.js is loaded at the end of body so the browser creates
+        the HTML elements before JavaScript selects them.
+    -->
     <script src="js/app.js"></script>
 
-
 </body>
-
 </html>
