@@ -6,37 +6,39 @@ FRESHTRACK - FOOD EXPIRY TRACKER
 INDEX.HTML
 =================================================================
 
-PURPOSE
--------
-This file contains the HTML structure of the FreshTrack application.
+STUDENT EXPLANATION
+-------------------
+This file is the structure of my FreshTrack webpage.
 
-ASSESSMENT FEATURES SHOWN IN THIS PAGE
---------------------------------------
-- User interface created with HTML
-- Form controls used by JavaScript
-- Full CRUD: Create, Read, Update and Delete
-- DOM elements selected and modified by JavaScript
-- Search and status filter controls
+How I explain the three files:
+- HTML = structure and form controls.
+- CSS = colours, spacing, layout and responsive design.
+- JavaScript = behaviour, CRUD, DOM changes and REST API calls.
+
+Main things shown in this page:
+- Add/Edit food form
+- Food dashboard
+- Search and status filters
+- Food inventory cards
+- Create, Read, Update and Delete controls
+- JSONBin REST API status area
 - Responsive layout supported by style.css
-- Real public REST API using JSONBin.io
-- HTTP GET to load data
-- HTTP PUT to save CRUD changes
-
-IMPORTANT FOR ORAL EXPLANATION
-------------------------------
-HTML provides the structure.
-CSS controls presentation.
-JavaScript controls behaviour, CRUD logic and REST API calls.
 =================================================================
 -->
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <!--
+    This viewport setting is needed so my mobile CSS media queries
+    use the real device width instead of a desktop-sized viewport.
+    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>FreshTrack | Food Expiry Tracker</title>
 
+    <!-- I keep all page styling in a separate CSS file. -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -44,6 +46,9 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
     <!-- =========================================================
          HEADER / NAVIGATION
+         =========================================================
+         The Add Food button has an ID because app.js listens for
+         its click event and scrolls the user to the food form.
          ========================================================= -->
     <header class="header">
         <div class="container navigation">
@@ -68,6 +73,9 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
     <!-- =========================================================
          HERO SECTION
+         =========================================================
+         This is the introduction to the app and explains the user
+         problem: remembering expiry dates and reducing food waste.
          ========================================================= -->
     <section class="hero">
         <div class="container hero-content">
@@ -114,8 +122,9 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          FOOD OVERVIEW DASHBOARD
          =========================================================
-         JavaScript calculates these values from the foods array
-         and changes the textContent of the four <strong> elements.
+         app.js calculates these four values from the foods array.
+         It changes each <strong> element using textContent, which
+         is one example of my DOM manipulation.
          ========================================================= -->
     <section class="dashboard">
         <div class="container">
@@ -164,17 +173,18 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          ADD / EDIT FOOD FORM
          =========================================================
-         One form performs both CREATE and UPDATE.
+         I reuse one form for two CRUD operations.
 
          CREATE:
-         JavaScript gives a new food object an ID and pushes it
-         into the foods array.
+         If editingId is null, app.js makes a new food object and
+         adds it to the foods array.
 
          UPDATE:
-         JavaScript replaces the matching existing food object.
+         If editingId contains an existing ID, app.js replaces the
+         matching object with the edited form values.
 
-         After either operation, the whole foods array is saved
-         to the public JSONBin record with HTTP PUT.
+         After Create or Update, app.js sends the full foods array
+         to JSONBin using HTTP PUT.
          ========================================================= -->
     <section class="form-section" id="food-form-section">
         <div class="container">
@@ -191,6 +201,11 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
                 <form id="food-form">
                     <div class="form-grid">
+
+                        <!--
+                        Product Code is required. app.js changes it to
+                        uppercase and prevents duplicate product codes.
+                        -->
                         <div class="form-group">
                             <label for="product-code">Product Code *</label>
                             <input
@@ -268,6 +283,7 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                     </div>
 
                     <div class="form-actions">
+                        <!-- Submitting this button triggers the form submit event in app.js. -->
                         <button
                             id="save-button"
                             type="submit"
@@ -276,6 +292,7 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                             Add Item
                         </button>
 
+                        <!-- This button appears only while the user is editing a record. -->
                         <button
                             id="cancel-button"
                             type="button"
@@ -293,9 +310,10 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          FOOD INVENTORY - READ IN CRUD
          =========================================================
-         Food cards are created by JavaScript and appended to
-         #food-grid. Edit and Delete buttons are also generated
-         dynamically for every food object.
+         This empty #food-grid is where JavaScript inserts the food
+         cards using createElement(), innerHTML and appendChild().
+
+         Each generated card also contains Edit and Delete buttons.
          ========================================================= -->
     <section class="inventory-section" id="inventory-section">
         <div class="container">
@@ -306,12 +324,14 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
             </div>
 
             <div class="toolbar">
+                <!-- The input event in app.js filters the cards as I type. -->
                 <input
                     id="search-input"
                     type="search"
                     placeholder="🔎 Search name or product code..."
                 >
 
+                <!-- data-filter tells JavaScript which status the user selected. -->
                 <div class="filters">
                     <button class="filter-button active" data-filter="All" type="button">All</button>
                     <button class="filter-button" data-filter="Fresh" type="button">Fresh</button>
@@ -320,8 +340,10 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                 </div>
             </div>
 
+            <!-- JavaScript dynamically inserts food cards here. -->
             <div id="food-grid" class="food-grid"></div>
 
+            <!-- JavaScript removes .hidden when no matching food is found. -->
             <div id="empty-message" class="empty-message hidden">
                 🥕 No food items found.
             </div>
@@ -332,22 +354,24 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          REAL REST API - JSONBIN.IO
          =========================================================
+         How I explain this to the lecturer:
 
          GET:
-         FreshTrack loads the latest public JSONBin record when the
-         page starts. The button below lets the lecturer trigger GET
-         again and see the result immediately.
+         When the app starts, JavaScript loads the latest foods array
+         from JSONBin. The button below lets me trigger the same GET
+         request manually during the demonstration.
 
          PUT:
-         Create, Update and Delete each call JSONBin with HTTP PUT.
-         The complete foods array is sent as JSON:
+         After Create, Update or Delete, FreshTrack sends the complete
+         updated foods array to JSONBin with HTTP PUT.
 
+         JSON format stored remotely:
          {
              "foods": [ ... ]
          }
 
-         This is a real external REST API. No JSONPlaceholder and no
-         private/Master API key are used in the browser.
+         The bin is public for the assessment, so the frontend does not
+         contain a private/Master API key.
          ========================================================= -->
     <section class="api-section">
         <div class="container">
@@ -370,11 +394,13 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                         Refresh Inventory (GET)
                     </button>
 
+                    <!-- This label reminds me that CRUD saves use HTTP PUT. -->
                     <span class="button button-light">
                         CRUD Save · PUT
                     </span>
                 </div>
 
+                <!-- app.js changes this text to show GET/PUT progress and results. -->
                 <div id="api-result" class="api-result">
                     Waiting to connect to JSONBin...
                 </div>
@@ -383,7 +409,7 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     </section>
 
 
-    <!-- JavaScript changes this text and toggles the .show class. -->
+    <!-- app.js changes the text and .show class to display short messages. -->
     <div id="toast" class="toast">
         Food saved successfully.
     </div>
@@ -402,8 +428,9 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
 
     <!--
-        api.js loads BEFORE app.js because app.js calls
-        FreshTrackAPI.loadFoods() and FreshTrackAPI.saveFoods().
+    Script order matters:
+    1. api.js creates FreshTrackAPI.
+    2. app.js then uses FreshTrackAPI.loadFoods() and saveFoods().
     -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
