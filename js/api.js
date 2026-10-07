@@ -1,6 +1,6 @@
 /*
 =================================================================
-FRESHTRACK - REAL REST API HELPERS
+FRESHTRACK - JSONBIN REST API HELPER
 API.JS
 =================================================================
 
@@ -8,184 +8,165 @@ PURPOSE
 -------
 Keep the external REST API code separate from the main CRUD logic.
 
-REAL PUBLIC APIs USED
----------------------
-1. Open Food Facts
-   GET a real food product by barcode.
+REAL PUBLIC REST API USED
+-------------------------
+JSONBin.io stores one public JSON document for this assessment.
+The document contains:
 
-2. ntfy
-   POST a real expiry reminder message.
+{
+    "foods": [ ... ]
+}
 
-This file uses only Vanilla JavaScript and fetch().
+FreshTrack uses:
+GET  -> read the latest food inventory
+PUT  -> replace the public JSON document after Create/Update/Delete
+
+No Master Key or private API key is stored in this project.
 =================================================================
 */
 
 (function (globalObject) {
     "use strict";
 
-    const OPEN_FOOD_FACTS_URL =
-        "https://world.openfoodfacts.org/api/v3/product";
+    /*
+    The Bin ID identifies the public FreshTrack JSON document.
+    It is not a secret key.
+    */
+    const BIN_ID = "6ac5cba7ac6210605a1b27b7";
 
-    const NTFY_TOPIC_URL =
-        "https://ntfy.sh/freshtrack-bells-demo-7f3c9a2e";
-
-
-    /* =========================================================
-       MAP OPEN FOOD FACTS CATEGORY -> FRESHTRACK CATEGORY
-       =========================================================
-       Open Food Facts can return many detailed category names.
-       FreshTrack uses a smaller category list, so this function
-       maps the API text into one of the application's categories.
-       ========================================================= */
-
-    function mapCategory(categories) {
-        const value = String(categories || "").toLowerCase();
-
-        if (/beverage|drink|juice|water|soda|coffee|tea/.test(value)) {
-            return "Drinks";
-        }
-
-        if (/milk|dairy|cheese|yogurt/.test(value)) {
-            return "Dairy";
-        }
-
-        if (/vegetable/.test(value)) {
-            return "Vegetables";
-        }
-
-        if (/fruit/.test(value)) {
-            return "Fruit";
-        }
-
-        if (/meat|beef|chicken|poultry|fish|seafood/.test(value)) {
-            return "Meat";
-        }
-
-        if (/bread|bakery|pastry|cake/.test(value)) {
-            return "Bakery";
-        }
-
-        if (/frozen/.test(value)) {
-            return "Frozen";
-        }
-
-        return "Others";
-    }
+    const BIN_URL =
+        `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 
     /* =========================================================
-       OPEN FOOD FACTS - HTTP GET
-       =========================================================
-       INPUT:
-       A barcode such as 3017624010701.
-
-       PROCESS:
-       1. Build the REST endpoint URL.
-       2. fetch() sends a GET request because no method is supplied.
-       3. await waits for the asynchronous response.
-       4. response.json() converts JSON into a JavaScript object.
-       5. Return only the fields FreshTrack needs.
+       HELPER - CHECK FETCH AVAILABILITY
        ========================================================= */
 
-    async function lookupProduct(barcode, fetchFunction) {
-        const code = String(barcode || "").trim();
-
-        if (code === "") {
-            throw new Error("Enter a product barcode or code first.");
-        }
-
+    function getFetch(fetchFunction) {
         const runFetch = fetchFunction || globalObject.fetch;
 
         if (typeof runFetch !== "function") {
             throw new Error("Fetch is not available in this browser.");
         }
 
-        const fields = "product_name,brands,categories";
+        return runFetch;
+    }
 
-        const url =
-            `${OPEN_FOOD_FACTS_URL}/${encodeURIComponent(code)}`
-            + `?fields=${fields}`;
 
-        const response = await runFetch(url);
+    /* =========================================================
+       JSONBIN - HTTP GET
+       =========================================================
+
+       PROCESS
+       -------
+       1. fetch() calls /latest.
+       2. No method is supplied, so HTTP GET is used.
+       3. await waits for the asynchronous response.
+       4. response.json() converts JSON text into an object.
+       5. Return only record.foods to app.js.
+       ========================================================= */
+
+    async function loadFoods(fetchFunction) {
+        const runFetch = getFetch(fetchFunction);
+
+        const response = await runFetch(
+            `${BIN_URL}/latest`
+        );
 
         if (!response.ok) {
-            throw new Error("Open Food Facts GET request failed.");
+            throw new Error(
+                `JSONBin GET request failed (${response.status}).`
+            );
         }
 
         const data = await response.json();
 
-        if (!data.product) {
-            throw new Error("No Open Food Facts product was found for this barcode.");
+        if (
+            !data
+            || !data.record
+            || !Array.isArray(data.record.foods)
+        ) {
+            return [];
         }
 
-        const product = data.product;
-
-        return {
-            code: code,
-            name: product.product_name || "",
-            brand: product.brands || "",
-            categories: product.categories || "",
-            category: mapCategory(product.categories)
-        };
+        return data.record.foods;
     }
 
 
     /* =========================================================
-       NTFY - HTTP POST
+       JSONBIN - HTTP PUT
        =========================================================
-       ntfy accepts a plain-text HTTP POST body.
 
-       FreshTrack sends only generic food reminder information.
-       No name, email, address or other personal data is sent.
+       INPUT
+       -----
+       foods: the FreshTrack foods ARRAY.
+
+       PROCESS
+       -------
+       1. Build a JavaScript object: { foods: foods }.
+       2. JSON.stringify() converts it into JSON text.
+       3. fetch() sends an HTTP PUT request.
+       4. The public bin is updated with the latest CRUD state.
+       5. The API response is converted back from JSON.
+
+       SECURITY
+       --------
+       This public-bin design intentionally sends NO X-Master-Key
+       and NO X-Access-Key from the browser.
        ========================================================= */
 
-    async function sendReminder(food, fetchFunction) {
-        if (!food || !food.name || !food.expiryDate) {
-            throw new Error("Food name and expiry date are required.");
+    async function saveFoods(foods, fetchFunction) {
+        if (!Array.isArray(foods)) {
+            throw new Error("FreshTrack foods must be an array.");
         }
 
-        const runFetch = fetchFunction || globalObject.fetch;
-
-        if (typeof runFetch !== "function") {
-            throw new Error("Fetch is not available in this browser.");
-        }
-
-        const message =
-            `FreshTrack reminder: ${food.name} expires on ${food.expiryDate}.`;
+        const runFetch = getFetch(fetchFunction);
 
         const response = await runFetch(
-            NTFY_TOPIC_URL,
+            BIN_URL,
             {
-                method: "POST",
-                body: message
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    foods: foods
+                })
             }
         );
 
         if (!response.ok) {
-            throw new Error("ntfy POST request failed.");
+            throw new Error(
+                `JSONBin PUT request failed (${response.status}).`
+            );
         }
 
-        return response.json();
+        const data = await response.json();
+
+        if (
+            data
+            && data.record
+            && Array.isArray(data.record.foods)
+        ) {
+            return data.record.foods;
+        }
+
+        return foods;
     }
 
 
-    /*
-    One object groups the API functions together.
-    app.js uses FreshTrackAPI.lookupProduct() and
-    FreshTrackAPI.sendReminder().
-    */
     const FreshTrackAPI = {
-        lookupProduct: lookupProduct,
-        sendReminder: sendReminder,
-        mapCategory: mapCategory
+        BIN_ID: BIN_ID,
+        loadFoods: loadFoods,
+        saveFoods: saveFoods
     };
 
 
-    /* Browser: make the helper object available to app.js. */
+    /* Browser: app.js reads window.FreshTrackAPI. */
     globalObject.FreshTrackAPI = FreshTrackAPI;
 
 
-    /* Node.js: export the same object so automated tests can run. */
+    /* Node.js: allow the same helper to be tested automatically. */
     if (typeof module !== "undefined" && module.exports) {
         module.exports = FreshTrackAPI;
     }
