@@ -14,33 +14,28 @@ ASSESSMENT FEATURES SHOWN IN THIS PAGE
 --------------------------------------
 - User interface created with HTML
 - Form controls used by JavaScript
-- CRUD controls for Create, Read, Update and Delete
+- Full CRUD controls: Create, Read, Update and Delete
 - DOM elements selected and modified by JavaScript
-- Search and filter controls
+- Search and status filters
 - Responsive layout supported by style.css
-- REST API demonstration with GET and POST buttons
+- Real REST API GET: Open Food Facts product lookup
+- Real REST API POST: ntfy expiry reminder
 
 IMPORTANT FOR ORAL EXPLANATION
 ------------------------------
 HTML provides the structure.
 CSS controls presentation.
-JavaScript controls the behaviour and application logic.
+JavaScript controls behaviour, CRUD logic and REST API calls.
 =================================================================
 -->
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <!--
-        The viewport meta tag allows the responsive CSS media queries
-        to work correctly on phones and tablets.
-    -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>FreshTrack | Food Expiry Tracker</title>
 
-    <!-- External CSS file -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -48,13 +43,9 @@ JavaScript controls the behaviour and application logic.
 
     <!-- =========================================================
          HEADER / NAVIGATION
-         =========================================================
-         JavaScript attaches a CLICK event to the Add Food button.
-         The same scrollToForm() function is reused by two buttons.
          ========================================================= -->
     <header class="header">
         <div class="container navigation">
-
             <a href="#" class="logo">
                 <span class="logo-icon">🌿</span>
                 <div>
@@ -70,20 +61,15 @@ JavaScript controls the behaviour and application logic.
             >
                 + Add Food
             </button>
-
         </div>
     </header>
 
 
     <!-- =========================================================
          HERO SECTION
-         =========================================================
-         FreshTrack solves a simple user problem:
-         people can forget food expiry dates and waste food.
          ========================================================= -->
     <section class="hero">
         <div class="container hero-content">
-
             <div class="hero-text">
                 <p class="eyebrow">FOOD EXPIRY TRACKER</p>
 
@@ -120,7 +106,6 @@ JavaScript controls the behaviour and application logic.
                     </p>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -128,21 +113,17 @@ JavaScript controls the behaviour and application logic.
     <!-- =========================================================
          FOOD OVERVIEW DASHBOARD
          =========================================================
-         JavaScript changes the textContent of these four elements.
-         The values are calculated from the foods array.
-
-         This is evidence of DOM manipulation.
+         JavaScript changes the textContent of these elements.
+         This provides visible DOM manipulation evidence.
          ========================================================= -->
     <section class="dashboard">
         <div class="container">
-
             <div class="section-heading">
                 <p class="eyebrow">YOUR KITCHEN</p>
                 <h2>Food Overview</h2>
             </div>
 
             <div class="stats-grid">
-
                 <article class="stat-card">
                     <div class="stat-icon blue">🛒</div>
                     <div>
@@ -174,7 +155,6 @@ JavaScript controls the behaviour and application logic.
                         <strong id="expired-count">0</strong>
                     </div>
                 </article>
-
             </div>
         </div>
     </section>
@@ -183,28 +163,25 @@ JavaScript controls the behaviour and application logic.
     <!-- =========================================================
          ADD / EDIT FOOD FORM
          =========================================================
-         ONE form performs TWO CRUD operations:
+         CREATE: editingId is null.
+         UPDATE: editingId contains an existing food ID.
 
-         CREATE:
-         editingId is null, so JavaScript creates a new food object.
-
-         UPDATE:
-         editingId contains an existing ID, so JavaScript replaces
-         the matching food object in the foods array.
-
-         PRODUCT CODE:
-         Product Code is required, converted to uppercase and checked
-         against existing records so duplicate codes are not allowed.
+         REAL API FEATURE:
+         Product Barcode / Code can be looked up using the
+         Open Food Facts REST API. The GET response can fill in
+         the food name, brand and FreshTrack category.
          ========================================================= -->
     <section class="form-section" id="food-form-section">
         <div class="container">
             <div class="form-card">
-
                 <div class="form-heading">
                     <div>
                         <p class="eyebrow">FOOD DETAILS</p>
                         <h2 id="form-title">Add Food Item</h2>
-                        <p>Enter the food information below.</p>
+                        <p>
+                            Enter the details manually or look up a real
+                            product barcode with Open Food Facts.
+                        </p>
                     </div>
 
                     <span class="form-icon">🥦</span>
@@ -214,18 +191,31 @@ JavaScript controls the behaviour and application logic.
                     <div class="form-grid">
 
                         <!--
-                            PRODUCT CODE
-                            Example values: MILK001, BEEF001, APPLE001.
-                            JavaScript stores this as food.productCode.
+                            PRODUCT BARCODE / CODE
+                            A barcode such as 3017624010701 can be looked
+                            up through the Open Food Facts GET endpoint.
+                            Manual codes such as BEEF001 still work too.
                         -->
                         <div class="form-group">
-                            <label for="product-code">Product Code *</label>
+                            <label for="product-code">Product Barcode / Code *</label>
                             <input
                                 id="product-code"
                                 type="text"
-                                placeholder="Example: BEEF001"
+                                placeholder="Example: 3017624010701 or BEEF001"
                                 required
                             >
+
+                            <button
+                                id="lookup-product-button"
+                                class="button button-light"
+                                type="button"
+                            >
+                                🔎 Lookup Product
+                            </button>
+
+                            <small id="product-lookup-result">
+                                Enter a real barcode to retrieve product information.
+                            </small>
                         </div>
 
                         <div class="form-group">
@@ -235,6 +225,16 @@ JavaScript controls the behaviour and application logic.
                                 type="text"
                                 placeholder="Example: Fresh Milk"
                                 required
+                            >
+                        </div>
+
+                        <!-- Brand is optional and can be filled by the GET API. -->
+                        <div class="form-group">
+                            <label for="food-brand">Brand</label>
+                            <input
+                                id="food-brand"
+                                type="text"
+                                placeholder="Filled automatically when available"
                             >
                         </div>
 
@@ -292,7 +292,6 @@ JavaScript controls the behaviour and application logic.
                                 placeholder="Optional note"
                             >
                         </div>
-
                     </div>
 
                     <div class="form-actions">
@@ -313,23 +312,16 @@ JavaScript controls the behaviour and application logic.
                         </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </section>
 
 
     <!-- =========================================================
-         FOOD INVENTORY
-         =========================================================
-         This section represents READ in CRUD.
-
-         JavaScript dynamically creates the food cards and inserts
-         them inside #food-grid using appendChild().
+         FOOD INVENTORY - READ IN CRUD
          ========================================================= -->
     <section class="inventory-section" id="inventory-section">
         <div class="container">
-
             <div class="section-heading">
                 <p class="eyebrow">MY FOOD</p>
                 <h2>Food Inventory</h2>
@@ -337,11 +329,6 @@ JavaScript controls the behaviour and application logic.
             </div>
 
             <div class="toolbar">
-
-                <!--
-                    JavaScript listens for the INPUT event here.
-                    The search matches either food.name or food.productCode.
-                -->
                 <input
                     id="search-input"
                     type="search"
@@ -356,89 +343,60 @@ JavaScript controls the behaviour and application logic.
                 </div>
             </div>
 
-            <!-- Food cards are inserted here by JavaScript -->
             <div id="food-grid" class="food-grid"></div>
 
             <div id="empty-message" class="empty-message hidden">
                 🥕 No food items found.
             </div>
-
         </div>
     </section>
 
 
     <!-- =========================================================
-         REST API / AJAX DEMONSTRATION
+         REAL REST API INFORMATION
          =========================================================
-         THIS SECTION IS KEPT FOR THE ASSESSMENT API REQUIREMENT.
+         GET:
+         Open Food Facts retrieves real product information.
 
-         GET BUTTON:
-         Uses fetch() without a method, therefore HTTP GET is used.
-         The JSON response is converted with response.json().
+         POST:
+         ntfy publishes a real expiry reminder when the user clicks
+         Send Reminder on a food card.
 
-         POST BUTTON:
-         Uses fetch() with method: "POST".
-         A FreshTrack-style JavaScript object is converted into JSON
-         using JSON.stringify() before being sent.
-
-         JavaScript concepts demonstrated:
-         - async
-         - await
-         - fetch()
-         - response.json()
-         - JSON.stringify()
-         - try / catch
-         - HTTP GET
-         - HTTP POST
-         - REST API
+         #api-result is updated after either request and therefore
+         provides additional DOM manipulation evidence.
          ========================================================= -->
     <section class="api-section">
         <div class="container">
             <div class="api-card">
-
                 <div>
-                    <p class="eyebrow">REST API</p>
-                    <h2>API Demonstration</h2>
+                    <p class="eyebrow">LIVE REST API</p>
+                    <h2>Connected Food Services</h2>
                     <p>
-                        Test the required asynchronous GET and POST requests
-                        using the public JSONPlaceholder REST API.
+                        Open Food Facts is used for a real GET product lookup.
+                        ntfy is used for a real POST expiry reminder.
+                    </p>
+                    <p>
+                        Product data source:
+                        <a href="https://world.openfoodfacts.org/" target="_blank">
+                            Open Food Facts
+                        </a>
                     </p>
                 </div>
 
                 <div class="api-buttons">
-                    <button
-                        id="get-button"
-                        class="button button-light"
-                        type="button"
-                    >
-                        Test GET
-                    </button>
-
-                    <button
-                        id="post-button"
-                        class="button button-primary"
-                        type="button"
-                    >
-                        Test POST
-                    </button>
+                    <span class="button button-light">GET · Open Food Facts</span>
+                    <span class="button button-light">POST · ntfy</span>
                 </div>
 
-                <!-- JavaScript replaces this text after an API request -->
                 <div id="api-result" class="api-result">
-                    API has not been tested yet.
+                    Use Lookup Product or Send Reminder to make a live REST API request.
                 </div>
-
             </div>
         </div>
     </section>
 
 
-    <!-- =========================================================
-         TOAST NOTIFICATION
-         =========================================================
-         JavaScript changes textContent and toggles the .show class
-         after Create, Update, Delete or validation actions.
-         ========================================================= -->
+    <!-- JavaScript changes the text and .show class of this toast. -->
     <div id="toast" class="toast">
         Food saved successfully.
     </div>
@@ -457,9 +415,10 @@ JavaScript controls the behaviour and application logic.
 
 
     <!--
-        app.js is loaded at the end of body so the browser creates
-        the HTML elements before JavaScript selects them.
+        api.js loads BEFORE app.js because app.js calls
+        FreshTrackAPI.lookupProduct() and FreshTrackAPI.sendReminder().
     -->
+    <script src="js/api.js"></script>
     <script src="js/app.js"></script>
 
 </body>
