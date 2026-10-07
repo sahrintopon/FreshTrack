@@ -11,15 +11,15 @@ This file contains the main JavaScript logic for FreshTrack.
 PROGRAM FLOW
 ------------
 1. Select HTML elements using querySelector().
-2. Load food records from localStorage.
-3. Store records in the foods ARRAY.
+2. GET the current food records from the public JSONBin REST API.
+3. Store the records in the foods ARRAY.
 4. Each food record is stored as an OBJECT.
 5. Calculate whether each item is Fresh, Expiring Soon or Expired.
 6. Display food cards dynamically in the DOM.
 7. Support full CRUD: Create, Read, Update and Delete.
 8. Search by Food Name OR Product Code.
 9. Prevent duplicate Product Codes.
-10. Demonstrate asynchronous REST API GET and POST requests.
+10. PUT the updated foods array back to JSONBin after CRUD changes.
 
 ASSESSMENT CONCEPT MAP
 ----------------------
@@ -34,11 +34,11 @@ DOM SELECTION         -> querySelector(), querySelectorAll()
 DOM MANIPULATION      -> textContent, innerHTML, classList, appendChild()
 EVENTS                -> submit, click, input
 CRUD                  -> Add, Display, Edit, Delete
-JSON                  -> JSON.parse(), JSON.stringify(), response.json()
+JSON                  -> JSON.stringify(), response.json()
 ASYNC                 -> async / await
-AJAX / REST API       -> fetch()
-HTTP GET              -> fetch(url)
-HTTP POST             -> fetch(url, { method: "POST" })
+AJAX / REST API       -> fetch() through FreshTrackAPI
+HTTP GET              -> Load the latest FreshTrack inventory
+HTTP PUT              -> Save Create / Update / Delete changes
 
 IMPORTANT STRUCTURED PROGRAMMING EXAMPLE
 ----------------------------------------
@@ -54,9 +54,6 @@ showToast(
 
 /* =============================================================
    SECTION 1 - SELECT HTML ELEMENTS
-   =============================================================
-   querySelector() selects ONE element.
-   querySelectorAll() selects MULTIPLE elements.
    ============================================================= */
 
 const foodForm = document.querySelector("#food-form");
@@ -86,11 +83,9 @@ const filterButtons = document.querySelectorAll(".filter-button");
 const topAddButton = document.querySelector("#top-add-button");
 const heroAddButton = document.querySelector("#hero-add-button");
 
-const toast = document.querySelector("#toast");
-
-const getButton = document.querySelector("#get-button");
-const postButton = document.querySelector("#post-button");
+const refreshApiButton = document.querySelector("#refresh-api-button");
 const apiResult = document.querySelector("#api-result");
+const toast = document.querySelector("#toast");
 
 
 /* =============================================================
@@ -123,42 +118,74 @@ const apiResult = document.querySelector("#api-result");
    Stores the currently selected status filter.
    ============================================================= */
 
-let foods = JSON.parse(
-    localStorage.getItem("freshTrackFoods")
-) || [];
-
+let foods = [];
 let editingId = null;
 let selectedFilter = "All";
 
 
 /* =============================================================
-   SECTION 3 - SAVE DATA TO LOCAL STORAGE
+   SECTION 3 - REST API LOAD / SAVE HELPERS
    =============================================================
 
-   localStorage only stores text.
-   JSON.stringify() converts the foods array into JSON text.
+   FreshTrackAPI is defined in api.js.
+
+   GET:
+   loadFoodsFromAPI() retrieves the latest JSONBin record.
+
+   PUT:
+   saveFoodsToAPI() replaces the JSONBin record with the current
+   foods array after Create, Update or Delete.
    ============================================================= */
 
-function saveFoodData() {
-    localStorage.setItem(
-        "freshTrackFoods",
-        JSON.stringify(foods)
-    );
+async function loadFoodsFromAPI() {
+    apiResult.textContent =
+        "GET in progress: loading inventory from JSONBin...";
+
+    try {
+        foods = await FreshTrackAPI.loadFoods();
+
+        apiResult.textContent =
+            `GET successful: loaded ${foods.length} food item(s) from JSONBin.`;
+
+        displayFoods();
+        return true;
+    }
+
+    catch (error) {
+        apiResult.textContent =
+            `GET failed: ${error.message}`;
+
+        showToast("Could not load FreshTrack data from JSONBin.");
+        displayFoods();
+        return false;
+    }
+}
+
+
+async function saveFoodsToAPI(actionName) {
+    apiResult.textContent =
+        `PUT in progress: saving ${actionName} to JSONBin...`;
+
+    try {
+        foods = await FreshTrackAPI.saveFoods(foods);
+
+        apiResult.textContent =
+            `PUT successful: ${actionName} saved to JSONBin.`;
+
+        return true;
+    }
+
+    catch (error) {
+        apiResult.textContent =
+            `PUT failed: ${error.message}`;
+
+        return false;
+    }
 }
 
 
 /* =============================================================
    SECTION 4 - PRODUCT CODE NORMALISATION
-   =============================================================
-
-   PURPOSE:
-   Keep Product Codes consistent.
-
-   Example:
-   " beef001 " -> "BEEF001"
-
-   trim() removes extra spaces.
-   toUpperCase() converts letters to capital letters.
    ============================================================= */
 
 function normalizeProductCode(code) {
@@ -170,21 +197,11 @@ function normalizeProductCode(code) {
    SECTION 5 - CHECK FOR DUPLICATE PRODUCT CODE
    =============================================================
 
-   PURPOSE:
-   Prevent two different food records from using the same code.
+   some() checks whether at least one food object already uses
+   the same Product Code.
 
-   some() checks whether AT LEAST ONE object matches the condition.
-
-   When editing:
-   food.id !== editingId allows the record to keep its own code.
-
-   ASSESSMENT CONCEPTS:
-   - Array method
-   - Function
-   - Parameter
-   - Return value
-   - Logical operator &&
-   - Comparison operators === and !==
+   When editing, food.id !== editingId allows the record to keep
+   its own code.
    ============================================================= */
 
 function isDuplicateProductCode(code) {
@@ -206,24 +223,6 @@ function isDuplicateProductCode(code) {
 
 /* =============================================================
    SECTION 6 - CALCULATE EXPIRY STATUS
-   =============================================================
-
-   INPUT:
-   expiryDate, for example "2026-10-10"
-
-   PROCESS:
-   1. Get today's date.
-   2. Convert expiryDate into a Date object.
-   3. Calculate the difference in days.
-   4. Use branching to decide the status.
-
-   RULES:
-   daysLeft < 0  -> Expired
-   daysLeft <= 3 -> Expiring Soon
-   otherwise     -> Fresh
-
-   OUTPUT:
-   An OBJECT containing status and daysLeft.
    ============================================================= */
 
 function calculateStatus(expiryDate) {
@@ -283,9 +282,6 @@ function getStatusClass(status) {
 
 /* =============================================================
    SECTION 8 - SELECT IMAGE BY FOOD CATEGORY
-   =============================================================
-
-   The function receives a category and RETURNS an image path.
    ============================================================= */
 
 function getFoodImage(category) {
@@ -325,10 +321,6 @@ function getFoodImage(category) {
 
 /* =============================================================
    SECTION 9 - FORMAT DATE
-   =============================================================
-
-   Example:
-   "2026-10-06" -> "6 Oct 2026"
    ============================================================= */
 
 function formatDate(dateValue) {
@@ -370,25 +362,6 @@ function getExpiryMessage(daysLeft) {
 
 /* =============================================================
    SECTION 11 - DISPLAY FOOD (READ IN CRUD)
-   =============================================================
-
-   PROCESS:
-   1. Clear existing cards.
-   2. Read the search text.
-   3. Filter by food name OR product code.
-   4. Filter by status.
-   5. Loop through matching food objects.
-   6. Create HTML cards dynamically.
-   7. Append cards into #food-grid.
-   8. Refresh the dashboard statistics.
-
-   ASSESSMENT CONCEPTS:
-   - READ in CRUD
-   - filter()
-   - forEach()
-   - || logical OR
-   - && logical AND
-   - DOM manipulation
    ============================================================= */
 
 function displayFoods() {
@@ -443,7 +416,6 @@ function displayFoods() {
             >
 
             <div class="food-card-content">
-
                 <div class="food-card-header">
                     <div>
                         <h3>${food.name}</h3>
@@ -483,7 +455,6 @@ function displayFoods() {
                     ? `<div class="food-notes">📝 ${food.notes}</div>`
                     : ""
                 }
-
             </div>
 
             <div class="card-actions">
@@ -514,10 +485,6 @@ function displayFoods() {
 
 /* =============================================================
    SECTION 12 - UPDATE DASHBOARD STATISTICS
-   =============================================================
-
-   forEach() loops through the foods array.
-   textContent modifies four DOM elements.
    ============================================================= */
 
 function updateStatistics() {
@@ -552,30 +519,25 @@ function updateStatistics() {
    SECTION 13 - CREATE / UPDATE FOOD
    =============================================================
 
-   EVENT:
-   submit
+   The form uses one SUBMIT event for two CRUD operations.
 
    CREATE:
    editingId === null
 
    UPDATE:
-   editingId contains an existing ID
+   editingId contains an existing food ID.
 
-   PRODUCT CODE VALIDATION:
-   The code is normalised first and duplicate codes are rejected.
+   After the array changes, FreshTrack sends a real HTTP PUT to
+   JSONBin. If the PUT fails, the previous array is restored.
    ============================================================= */
 
-foodForm.addEventListener("submit", function (event) {
+foodForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const normalizedCode = normalizeProductCode(
         productCode.value
     );
 
-    /*
-    If another food record already uses this code,
-    show a message and STOP the submit function with return.
-    */
     if (isDuplicateProductCode(normalizedCode)) {
         showToast(
             `Product Code ${normalizedCode} is already in use.`
@@ -585,10 +547,6 @@ foodForm.addEventListener("submit", function (event) {
         return;
     }
 
-    /*
-    OBJECT:
-    The form values are grouped into one foodData object.
-    */
     const foodData = {
         productCode: normalizedCode,
         name: foodName.value.trim(),
@@ -599,18 +557,19 @@ foodForm.addEventListener("submit", function (event) {
         notes: foodNotes.value.trim()
     };
 
+    const previousFoods = foods.map(function (food) {
+        return { ...food };
+    });
+
+    let actionWord = "";
+    let apiAction = "";
+
     /* ------------------------- CREATE ------------------------- */
     if (editingId === null) {
         foodData.id = Date.now();
-
         foods.push(foodData);
-
-        showToast(
-            buildMessage(
-                foodData.name,
-                "added"
-            )
-        );
+        actionWord = "added";
+        apiAction = `CREATE of ${foodData.name}`;
     }
 
     /* ------------------------- UPDATE ------------------------- */
@@ -619,22 +578,45 @@ foodForm.addEventListener("submit", function (event) {
             return food.id === editingId;
         });
 
-        if (index !== -1) {
-            foods[index] = {
-                id: editingId,
-                ...foodData
-            };
-
-            showToast(
-                buildMessage(
-                    foodData.name,
-                    "updated"
-                )
-            );
+        if (index === -1) {
+            showToast("The selected food item could not be found.");
+            return;
         }
+
+        foods[index] = {
+            id: editingId,
+            ...foodData
+        };
+
+        actionWord = "updated";
+        apiAction = `UPDATE of ${foodData.name}`;
     }
 
-    saveFoodData();
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    const saved = await saveFoodsToAPI(apiAction);
+
+    saveButton.disabled = false;
+
+    if (!saved) {
+        foods = previousFoods;
+        displayFoods();
+
+        saveButton.textContent =
+            editingId === null ? "Add Item" : "Save Changes";
+
+        showToast("Changes were not saved because the API request failed.");
+        return;
+    }
+
+    showToast(
+        buildMessage(
+            foodData.name,
+            actionWord
+        )
+    );
+
     resetForm();
     displayFoods();
 });
@@ -642,16 +624,6 @@ foodForm.addEventListener("submit", function (event) {
 
 /* =============================================================
    SECTION 14 - RETURN VALUE USED AS ANOTHER FUNCTION ARGUMENT
-   =============================================================
-
-   buildMessage() RETURNS a string.
-
-   Example:
-   buildMessage("Milk", "added")
-   returns:
-   "Milk was successfully added."
-
-   That return value is used directly as the argument of showToast().
    ============================================================= */
 
 function buildMessage(foodNameValue, action) {
@@ -661,12 +633,6 @@ function buildMessage(foodNameValue, action) {
 
 /* =============================================================
    SECTION 15 - TOAST NOTIFICATION
-   =============================================================
-
-   DOM MANIPULATION:
-   - textContent
-   - classList.add()
-   - classList.remove()
    ============================================================= */
 
 function showToast(message) {
@@ -681,10 +647,6 @@ function showToast(message) {
 
 /* =============================================================
    SECTION 16 - EDIT / DELETE EVENT DELEGATION
-   =============================================================
-
-   One click listener is attached to #food-grid instead of adding
-   a separate listener to every dynamically created card.
    ============================================================= */
 
 foodGrid.addEventListener("click", function (event) {
@@ -702,10 +664,6 @@ foodGrid.addEventListener("click", function (event) {
 
 /* =============================================================
    SECTION 17 - START EDITING (UPDATE IN CRUD)
-   =============================================================
-
-   find() searches the foods array for the matching object.
-   The object's properties are copied back into the form fields.
    ============================================================= */
 
 function startEditing(id) {
@@ -743,10 +701,11 @@ function startEditing(id) {
    SECTION 18 - DELETE FOOD (DELETE IN CRUD)
    =============================================================
 
-   filter() creates a new array WITHOUT the selected record.
+   filter() creates a new foods array without the selected object.
+   Then a real JSONBin PUT saves the new array remotely.
    ============================================================= */
 
-function deleteFood(id) {
+async function deleteFood(id) {
     const selectedFood = foods.find(function (food) {
         return food.id === id;
     });
@@ -763,11 +722,25 @@ function deleteFood(id) {
         return;
     }
 
+    const previousFoods = foods.map(function (food) {
+        return { ...food };
+    });
+
     foods = foods.filter(function (food) {
         return food.id !== id;
     });
 
-    saveFoodData();
+    const saved = await saveFoodsToAPI(
+        `DELETE of ${selectedFood.name}`
+    );
+
+    if (!saved) {
+        foods = previousFoods;
+        displayFoods();
+        showToast("Delete was cancelled because the API request failed.");
+        return;
+    }
+
     displayFoods();
 
     showToast(
@@ -806,10 +779,6 @@ cancelButton.addEventListener("click", function () {
 
 /* =============================================================
    SECTION 21 - SEARCH EVENT
-   =============================================================
-
-   The input event runs every time the user types.
-   displayFoods() then performs the search again.
    ============================================================= */
 
 searchInput.addEventListener("input", function () {
@@ -819,10 +788,6 @@ searchInput.addEventListener("input", function () {
 
 /* =============================================================
    SECTION 22 - FILTER BUTTON EVENTS
-   =============================================================
-
-   forEach() loops through all filter buttons and attaches
-   a click event listener to each button.
    ============================================================= */
 
 filterButtons.forEach(function (button) {
@@ -841,9 +806,6 @@ filterButtons.forEach(function (button) {
 
 /* =============================================================
    SECTION 23 - SCROLL TO FORM
-   =============================================================
-
-   The same function is REUSED by two different click events.
    ============================================================= */
 
 function scrollToForm() {
@@ -860,133 +822,37 @@ heroAddButton.addEventListener("click", scrollToForm);
 
 
 /* =============================================================
-   SECTION 24 - REST API GET REQUEST
+   SECTION 24 - MANUAL REST API GET
    =============================================================
 
-   THIS IS ASSESSMENT EVIDENCE FOR:
-   - asynchronous programming
-   - AJAX
-   - HTTP GET
-   - JSON
-   - REST API
-
-   KEYWORDS TO EXPLAIN:
-   async
-       Marks the event handler as asynchronous.
-
-   fetch()
-       Sends the HTTP request.
-
-   await
-       Waits until the Promise completes.
-
-   response.json()
-       Converts the JSON response into a JavaScript object.
-
-   GET
-       No method is supplied, so fetch() uses GET automatically.
+   The app automatically performs GET on startup, but this button
+   makes the GET operation easy to demonstrate to the lecturer.
    ============================================================= */
 
-getButton.addEventListener("click", async function () {
-    apiResult.textContent = "Sending GET request...";
+refreshApiButton.addEventListener("click", async function () {
+    refreshApiButton.disabled = true;
+    refreshApiButton.textContent = "Refreshing...";
 
-    try {
-        const response = await fetch(
-            "https://jsonplaceholder.typicode.com/posts/1"
-        );
+    await loadFoodsFromAPI();
 
-        if (!response.ok) {
-            throw new Error("GET request failed.");
-        }
-
-        const data = await response.json();
-
-        apiResult.textContent =
-            `GET successful. Record ${data.id}: ${data.title}`;
-    }
-
-    catch (error) {
-        apiResult.textContent =
-            "GET request failed. Please check your internet connection.";
-    }
+    refreshApiButton.disabled = false;
+    refreshApiButton.textContent = "Refresh Inventory (GET)";
 });
 
 
 /* =============================================================
-   SECTION 25 - REST API POST REQUEST
+   SECTION 25 - START APPLICATION
    =============================================================
 
-   THIS IS ASSESSMENT EVIDENCE FOR:
-   - asynchronous programming
-   - AJAX
-   - HTTP POST
-   - JavaScript object
-   - JSON.stringify()
-   - response.json()
-   - REST API
-
-   FreshTrack-specific demonstration data is used so the example
-   is easier to explain during the lecturer oral clarification.
-
-   IMPORTANT:
-   JSONPlaceholder is a TEST API. It simulates creating a record
-   and returns a response, but it does not permanently save it.
+   This custom async function is called when app.js loads.
+   The GET request retrieves the current JSONBin data and then
+   displayFoods() renders it in the browser.
    ============================================================= */
 
-postButton.addEventListener("click", async function () {
-    apiResult.textContent = "Sending POST request...";
-
-    /*
-    JAVASCRIPT OBJECT that will be sent to the REST API.
-    */
-    const dataToSend = {
-        productCode: "DEMO001",
-        foodName: "FreshTrack Demo Food",
-        category: "Others",
-        quantity: 1,
-        source: "FreshTrack API demonstration"
-    };
-
-    try {
-        const response = await fetch(
-            "https://jsonplaceholder.typicode.com/posts",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                /*
-                JSON.stringify() converts the JavaScript object
-                into JSON text before it is transmitted.
-                */
-                body: JSON.stringify(dataToSend)
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("POST request failed.");
-        }
-
-        const data = await response.json();
-
-        apiResult.textContent =
-            `POST successful. Demo record ID: ${data.id}`;
-    }
-
-    catch (error) {
-        apiResult.textContent =
-            "POST request failed. Please check your internet connection.";
-    }
-});
+async function startApplication() {
+    displayFoods();
+    await loadFoodsFromAPI();
+}
 
 
-/* =============================================================
-   SECTION 26 - START APPLICATION
-   =============================================================
-
-   displayFoods() runs immediately when app.js loads.
-   It displays saved data and updates the statistics dashboard.
-   ============================================================= */
-
-displayFoods();
+startApplication();
