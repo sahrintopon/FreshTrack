@@ -14,12 +14,13 @@ ASSESSMENT FEATURES SHOWN IN THIS PAGE
 --------------------------------------
 - User interface created with HTML
 - Form controls used by JavaScript
-- Full CRUD controls: Create, Read, Update and Delete
+- Full CRUD: Create, Read, Update and Delete
 - DOM elements selected and modified by JavaScript
-- Search and status filters
+- Search and status filter controls
 - Responsive layout supported by style.css
-- Real REST API GET: Open Food Facts product lookup
-- Real REST API POST: ntfy expiry reminder
+- Real public REST API using JSONBin.io
+- HTTP GET to load data
+- HTTP PUT to save CRUD changes
 
 IMPORTANT FOR ORAL EXPLANATION
 ------------------------------
@@ -113,8 +114,8 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          FOOD OVERVIEW DASHBOARD
          =========================================================
-         JavaScript changes the textContent of these elements.
-         This provides visible DOM manipulation evidence.
+         JavaScript calculates these values from the foods array
+         and changes the textContent of the four <strong> elements.
          ========================================================= -->
     <section class="dashboard">
         <div class="container">
@@ -163,13 +164,17 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
     <!-- =========================================================
          ADD / EDIT FOOD FORM
          =========================================================
-         CREATE: editingId is null.
-         UPDATE: editingId contains an existing food ID.
+         One form performs both CREATE and UPDATE.
 
-         REAL API FEATURE:
-         Product Barcode / Code can be looked up using the
-         Open Food Facts REST API. The GET response can fill in
-         the food name, brand and FreshTrack category.
+         CREATE:
+         JavaScript gives a new food object an ID and pushes it
+         into the foods array.
+
+         UPDATE:
+         JavaScript replaces the matching existing food object.
+
+         After either operation, the whole foods array is saved
+         to the public JSONBin record with HTTP PUT.
          ========================================================= -->
     <section class="form-section" id="food-form-section">
         <div class="container">
@@ -178,10 +183,7 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                     <div>
                         <p class="eyebrow">FOOD DETAILS</p>
                         <h2 id="form-title">Add Food Item</h2>
-                        <p>
-                            Enter the details manually or look up a real
-                            product barcode with Open Food Facts.
-                        </p>
+                        <p>Enter the food information below.</p>
                     </div>
 
                     <span class="form-icon">🥦</span>
@@ -189,33 +191,14 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
                 <form id="food-form">
                     <div class="form-grid">
-
-                        <!--
-                            PRODUCT BARCODE / CODE
-                            A barcode such as 3017624010701 can be looked
-                            up through the Open Food Facts GET endpoint.
-                            Manual codes such as BEEF001 still work too.
-                        -->
                         <div class="form-group">
-                            <label for="product-code">Product Barcode / Code *</label>
+                            <label for="product-code">Product Code *</label>
                             <input
                                 id="product-code"
                                 type="text"
-                                placeholder="Example: 3017624010701 or BEEF001"
+                                placeholder="Example: BEEF001"
                                 required
                             >
-
-                            <button
-                                id="lookup-product-button"
-                                class="button button-light"
-                                type="button"
-                            >
-                                🔎 Lookup Product
-                            </button>
-
-                            <small id="product-lookup-result">
-                                Enter a real barcode to retrieve product information.
-                            </small>
                         </div>
 
                         <div class="form-group">
@@ -225,16 +208,6 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
                                 type="text"
                                 placeholder="Example: Fresh Milk"
                                 required
-                            >
-                        </div>
-
-                        <!-- Brand is optional and can be filled by the GET API. -->
-                        <div class="form-group">
-                            <label for="food-brand">Brand</label>
-                            <input
-                                id="food-brand"
-                                type="text"
-                                placeholder="Filled automatically when available"
                             >
                         </div>
 
@@ -319,6 +292,10 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
     <!-- =========================================================
          FOOD INVENTORY - READ IN CRUD
+         =========================================================
+         Food cards are created by JavaScript and appended to
+         #food-grid. Edit and Delete buttons are also generated
+         dynamically for every food object.
          ========================================================= -->
     <section class="inventory-section" id="inventory-section">
         <div class="container">
@@ -353,50 +330,60 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
 
     <!-- =========================================================
-         REAL REST API INFORMATION
+         REAL REST API - JSONBIN.IO
          =========================================================
+
          GET:
-         Open Food Facts retrieves real product information.
+         FreshTrack loads the latest public JSONBin record when the
+         page starts. The button below lets the lecturer trigger GET
+         again and see the result immediately.
 
-         POST:
-         ntfy publishes a real expiry reminder when the user clicks
-         Send Reminder on a food card.
+         PUT:
+         Create, Update and Delete each call JSONBin with HTTP PUT.
+         The complete foods array is sent as JSON:
 
-         #api-result is updated after either request and therefore
-         provides additional DOM manipulation evidence.
+         {
+             "foods": [ ... ]
+         }
+
+         This is a real external REST API. No JSONPlaceholder and no
+         private/Master API key are used in the browser.
          ========================================================= -->
     <section class="api-section">
         <div class="container">
             <div class="api-card">
                 <div>
                     <p class="eyebrow">LIVE REST API</p>
-                    <h2>Connected Food Services</h2>
+                    <h2>JSONBin Cloud Data</h2>
                     <p>
-                        Open Food Facts is used for a real GET product lookup.
-                        ntfy is used for a real POST expiry reminder.
-                    </p>
-                    <p>
-                        Product data source:
-                        <a href="https://world.openfoodfacts.org/" target="_blank">
-                            Open Food Facts
-                        </a>
+                        FreshTrack uses JSONBin.io to load and save the
+                        food inventory through real asynchronous REST requests.
                     </p>
                 </div>
 
                 <div class="api-buttons">
-                    <span class="button button-light">GET · Open Food Facts</span>
-                    <span class="button button-light">POST · ntfy</span>
+                    <button
+                        id="refresh-api-button"
+                        class="button button-light"
+                        type="button"
+                    >
+                        Refresh Inventory (GET)
+                    </button>
+
+                    <span class="button button-light">
+                        CRUD Save · PUT
+                    </span>
                 </div>
 
                 <div id="api-result" class="api-result">
-                    Use Lookup Product or Send Reminder to make a live REST API request.
+                    Waiting to connect to JSONBin...
                 </div>
             </div>
         </div>
     </section>
 
 
-    <!-- JavaScript changes the text and .show class of this toast. -->
+    <!-- JavaScript changes this text and toggles the .show class. -->
     <div id="toast" class="toast">
         Food saved successfully.
     </div>
@@ -416,7 +403,7 @@ JavaScript controls behaviour, CRUD logic and REST API calls.
 
     <!--
         api.js loads BEFORE app.js because app.js calls
-        FreshTrackAPI.lookupProduct() and FreshTrackAPI.sendReminder().
+        FreshTrackAPI.loadFoods() and FreshTrackAPI.saveFoods().
     -->
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
